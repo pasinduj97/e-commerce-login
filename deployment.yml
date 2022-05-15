@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: e-commerce-login
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: e-commerce-login
@@ -18,12 +18,27 @@ spec:
         app: e-commerce-login
     spec:
       containers:
-        - name: e-commerce-login-container
-          image: pasinduj97/e-commerce-login:v1
+        - image: pasinduj97/e-commerce-login:latest
+          name: e-commerce-login-container
+          imagePullPolicy: Always
           ports:
             - containerPort: 4070
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4070
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4070
+            initialDelaySeconds: 30
+            periodSeconds: 10
           resources:
             requests:
-              cpu: 100m
+              memory: "256Mi"
+              cpu: "500m"
             limits:
-              cpu: 100m
+              memory: "1Gi"
+              cpu: "1000m"
